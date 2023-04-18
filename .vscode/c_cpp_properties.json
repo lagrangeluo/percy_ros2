@@ -1,0 +1,20 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/opt/ros/galactic/include/**",
+                "/home/agilex/percy_ws/src/ugv_sdk/include/**",
+                "/home/agilex/percy_ws/install/percy_msgs/include/**",
+                "/usr/include/c++/**"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/clang",
+            "cStandard": "c17",
+            "cppStandard": "c++14",
+            "intelliSenseMode": "linux-clang-x64"
+        }
+    ],
+    "version": 4
+}
