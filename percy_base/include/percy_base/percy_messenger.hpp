@@ -22,6 +22,8 @@
 
 #include "percy_msgs/msg/percy_status.hpp"
 #include "percy_msgs/msg/percy_light_cmd.hpp"
+#include "percy_msgs/msg/percy_rgb.hpp"
+#include "percy_msgs/msg/percy_rgb_cmd.hpp"
 
 #include "ugv_sdk/utilities/protocol_detector.hpp"
 
@@ -58,6 +60,10 @@ class PercyMessenger {
         std::bind(&PercyMessenger::LightCmdCallback, this,
                   std::placeholders::_1));
 
+    light_rgb_cmd_sub_ = node_->create_subscription<percy_msgs::msg::PercyRgbCmd>(
+      "/light_rgb_cmd", 5,std::bind(&PercyMessenger::LightRgbCmdCallback, this,
+                  std::placeholders::_1)
+    );
     tf_broadcaster_ = std::make_shared<tf2_ros::TransformBroadcaster>(node_);
   }
 
@@ -146,8 +152,9 @@ class PercyMessenger {
   rclcpp::Publisher<percy_msgs::msg::PercyStatus>::SharedPtr status_pub_;
 
   rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr motion_cmd_sub_;
-  rclcpp::Subscription<percy_msgs::msg::PercyLightCmd>::SharedPtr
-      light_cmd_sub_;
+  rclcpp::Subscription<percy_msgs::msg::PercyLightCmd>::SharedPtr light_cmd_sub_;
+
+  rclcpp::Subscription<percy_msgs::msg::PercyRgbCmd>::SharedPtr light_rgb_cmd_sub_;
 
   std::shared_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
 
@@ -224,6 +231,28 @@ class PercyMessenger {
     }
   }
   
+  void LightRgbCmdCallback(const percy_msgs::msg::PercyRgbCmd::SharedPtr msg)
+  {
+    RGB_val light_status[4];
+
+    light_status[0][0] = msg->front_left.r_value;
+    light_status[0][1] = msg->front_left.g_value;
+    light_status[0][2] = msg->front_left.b_value;
+
+    light_status[1][0] = msg->front_right.r_value;
+    light_status[1][1] = msg->front_right.g_value;
+    light_status[1][2] = msg->front_right.b_value;
+
+    light_status[2][0] = msg->back_left.r_value;
+    light_status[2][1] = msg->back_left.g_value;
+    light_status[2][2] = msg->back_left.b_value;
+
+    light_status[3][0] = msg->back_right.r_value;
+    light_status[3][1] = msg->back_right.g_value;
+    light_status[3][2] = msg->back_right.b_value;
+
+    percy_->SendLightRGB(light_status);
+  }
 
   geometry_msgs::msg::Quaternion createQuaternionMsgFromYaw(double yaw) {
     tf2::Quaternion q;

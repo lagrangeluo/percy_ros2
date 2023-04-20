@@ -107,5 +107,10 @@ Always have your remote controller ready to take over the control whenever neces
   ```bash
   ros2 topic pub -1 /light_control percy_msgs/msg/PercyLightCmd "{cmd_ctrl_allowed: true, front_illumination_mode: 1, back_illumination_mode: 1}"
   ```
+  - the light rgb message:
+
+  ```bash
+  ros2 topic pub -1 /light_rgb_cmd percy_msgs/msg/PercyRgbCmd "{front_left: {r_value: 1, g_value: 2, b_value: 3}, front_right: {r_value: 4, g_value: 5, b_value: 6}, back_left: {r_value: 7, g_value: 8, b_value: 9}, back_right: {r_value: 10, g_value: 11, b_value: 12}}"
+  ```
 
   
