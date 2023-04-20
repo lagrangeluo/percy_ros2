@@ -112,5 +112,16 @@ Always have your remote controller ready to take over the control whenever neces
   ```bash
   ros2 topic pub -1 /light_rgb_cmd percy_msgs/msg/PercyRgbCmd "{front_left: {r_value: 1, g_value: 2, b_value: 3}, front_right: {r_value: 4, g_value: 5, b_value: 6}, back_left: {r_value: 7, g_value: 8, b_value: 9}, back_right: {r_value: 10, g_value: 11, b_value: 12}}"
   ```
+  - the break mode control message:
+
+  ```bash
+  ros2 topic pub -1 /percy_break_mode percy_msgs/msg/PercyBreakCtl "{break_mode: 1}"
+  ```
+
+  - the power rail command:
+
+  ```bash
+  ros2 topic pub -1 /percy_power_rail_cmd percy_msgs/msg/PercyPowerRailCtl "{external_48v: true, external_5v: true, fan_12v: true, jetson1_12v: true, jetson2_12v: true, ultrasonic_sensor_12v: true, camera_12v: true, router_5g_12v: true, switchboard_12v: true, usb_hub_12v: true, sick_system_24v: true}"
+  ```
 
   

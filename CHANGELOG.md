@@ -4,6 +4,8 @@
 ------------------
 - add light rgb command ros msg files
 - test light rgb command message using virtual can network.
+- test break control command message
+- test power rail control function
 
 ## 1.1 (2023-4-18)
 ------------------

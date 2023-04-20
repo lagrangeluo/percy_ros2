@@ -24,6 +24,8 @@
 #include "percy_msgs/msg/percy_light_cmd.hpp"
 #include "percy_msgs/msg/percy_rgb.hpp"
 #include "percy_msgs/msg/percy_rgb_cmd.hpp"
+#include "percy_msgs/msg/percy_break_ctl.hpp"
+#include "percy_msgs/msg/percy_power_rail_ctl.hpp"
 
 #include "ugv_sdk/utilities/protocol_detector.hpp"
 
@@ -62,8 +64,16 @@ class PercyMessenger {
 
     light_rgb_cmd_sub_ = node_->create_subscription<percy_msgs::msg::PercyRgbCmd>(
       "/light_rgb_cmd", 5,std::bind(&PercyMessenger::LightRgbCmdCallback, this,
-                  std::placeholders::_1)
-    );
+                  std::placeholders::_1));
+
+    break_mode_cmd_sub = node_->create_subscription<percy_msgs::msg::PercyBreakCtl>(
+      "/percy_break_mode", 5,std::bind(&PercyMessenger::BreakCommandCallback, this,
+                  std::placeholders::_1));
+
+    power_rail_ctl_sub = node_->create_subscription<percy_msgs::msg::PercyPowerRailCtl>(
+      "/percy_power_rail_cmd", 5,std::bind(&PercyMessenger::PowerRailCtlCallback, this,
+                  std::placeholders::_1));
+
     tf_broadcaster_ = std::make_shared<tf2_ros::TransformBroadcaster>(node_);
   }
 
@@ -155,6 +165,8 @@ class PercyMessenger {
   rclcpp::Subscription<percy_msgs::msg::PercyLightCmd>::SharedPtr light_cmd_sub_;
 
   rclcpp::Subscription<percy_msgs::msg::PercyRgbCmd>::SharedPtr light_rgb_cmd_sub_;
+  rclcpp::Subscription<percy_msgs::msg::PercyBreakCtl>::SharedPtr break_mode_cmd_sub;
+  rclcpp::Subscription<percy_msgs::msg::PercyPowerRailCtl>::SharedPtr power_rail_ctl_sub;
 
   std::shared_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
 
@@ -254,6 +266,46 @@ class PercyMessenger {
     percy_->SendLightRGB(light_status);
   }
 
+  void BreakCommandCallback(const percy_msgs::msg::PercyBreakCtl::SharedPtr msg)
+  {
+    AgxPercyBrakeMode break_mode;
+
+    if(msg->break_mode == percy_msgs::msg::PercyBreakCtl::BRERAK_CONTROL_VCU)
+      break_mode = AgxPercyBrakeMode::BRAKE_CTL_BY_VCU;
+    if(msg->break_mode == percy_msgs::msg::PercyBreakCtl::BREAK_RELEASE)
+      break_mode = AgxPercyBrakeMode::BRAKE_RELEASE;
+
+    percy_->SetBrakeMode(break_mode);
+  }
+
+  void PowerRailCtlCallback(const percy_msgs::msg::PercyPowerRailCtl::SharedPtr msg)
+  {
+    PowerRailctlMessage message;
+    // if(msg->external_48v == true)
+    //   message.power_status |= (uint16_t)0x0001;
+    // else
+    //   message.power_status &= ~((uint16_t)0x0001);
+    // if(msg->external_5v == true)
+    //   message.power_status |= (uint16_t)0x0002;
+    // else
+    //   message.power_status &= ~((uint16_t)0x0002);
+    
+    message.power_status = (uint16_t)((uint16_t)(msg->external_48v) << 8)
+                         | (uint16_t)((uint16_t)(msg->external_5v) << 9) 
+                         | (uint16_t)((uint16_t)(msg->fan_12v) << 10)
+                         | (uint16_t)((uint16_t)(msg->jetson1_12v) << 0)
+                         | (uint16_t)((uint16_t)(msg->jetson2_12v) << 1)
+                         | (uint16_t)((uint16_t)(msg->ultrasonic_sensor_12v) << 2)
+                         | (uint16_t)((uint16_t)(msg->camera_12v) << 3)
+                         | (uint16_t)((uint16_t)(msg->router_5g_12v) << 4)
+                         | (uint16_t)((uint16_t)(msg->switchboard_12v) << 5)
+                         | (uint16_t)((uint16_t)(msg->usb_hub_12v) << 6)
+                         | (uint16_t)((uint16_t)(msg->sick_system_24v) << 7);
+    
+    std::cout<<message.power_status<<std::endl;
+
+    percy_->SetPowerRail(message);
+  }
   geometry_msgs::msg::Quaternion createQuaternionMsgFromYaw(double yaw) {
     tf2::Quaternion q;
     q.setRPY(0, 0, yaw);

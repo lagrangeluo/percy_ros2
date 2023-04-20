@@ -24,6 +24,8 @@ set(msg_file
 "msg/PercyStatus.msg"
 "msg/PercyRgb.msg"
 "msg/PercyRgbCmd.msg"
+"msg/PercyBreakCtl.msg"
+"msg/PercyPowerRailCtl.msg"
 )
 
 # set(srv_file
