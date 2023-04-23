@@ -80,6 +80,8 @@ Always have your remote controller ready to take over the control whenever neces
 
 ## CAN test
 
+this part is used for agilex's developers to test the CAN protocol
+
 - enable the virtual can net
 
   ``` bash
@@ -123,5 +125,71 @@ Always have your remote controller ready to take over the control whenever neces
   ```bash
   ros2 topic pub -1 /percy_power_rail_cmd percy_msgs/msg/PercyPowerRailCtl "{external_48v: true, external_5v: true, fan_12v: true, jetson1_12v: true, jetson2_12v: true, ultrasonic_sensor_12v: true, camera_12v: true, router_5g_12v: true, switchboard_12v: true, usb_hub_12v: true, sick_system_24v: true}"
   ```
-
   
+- test the feedback messages
+
+  - send the system state feedback message
+
+  ```bash
+   cansend vcan0 211#0000000000000000
+   cansend vcan0 211#0101323232320001
+  ```
+  
+  ```bash
+  ros2 topic echo /percy_status topic (part of it)
+  vehicle_state: 1
+  control_mode: 1
+  error_code: 1
+  fan_1_percentage: 50
+  fan_2_percentage: 50
+  fan_3_percentage: 50
+  fan_4_percentage: 50
+  ```
+  
+  - send the motion feedback
+  
+  ```bash
+   cansend vcan0 221#03E803E800000000
+  ```
+  
+  ```bash
+  ros2 topic echo /percy_status topic (part of it)
+  linear_velocity: 1.0
+  angular_velocity: 1.0
+  ```
+  
+  - send the light state feedback
+  
+  ```bash
+   cansend vcan0 231#0000000000000000
+   cansend vcan0 231#0101000100000000
+  ```
+  ```bash
+  ros2 topic echo /percy_status topic (part of it)
+  light_control_state: 1
+  front_light_mode: 1
+  back_light_mode: 1
+  ```
+  
+  - send the light rgb feedback
+  
+  ```bash
+   cansend vcan0 232#0001010101010100
+   cansend vcan0 233#0001010101010100
+  ```
+  
+  ```bash
+  ros2 topic echo /percy_status topic (part of it)
+  front_left:
+    r_value: 1
+    g_value: 1
+    b_value: 1
+  front_right:
+    r_value: 1
+    g_value: 1
+    b_value: 1
+    ...(the same with back_left and back_right)
+  ```
+  
+  
+
