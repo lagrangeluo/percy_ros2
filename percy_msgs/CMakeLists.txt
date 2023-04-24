@@ -19,7 +19,6 @@ find_package(std_msgs REQUIRED)
 set(msg_file
 "msg/PercyActuatorState.msg"
 "msg/PercyLightCmd.msg"
-"msg/PercyLightState.msg"
 "msg/PercyRCState.msg"
 "msg/PercyStatus.msg"
 "msg/PercyRgb.msg"

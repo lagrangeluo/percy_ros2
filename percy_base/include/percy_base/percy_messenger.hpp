@@ -125,34 +125,30 @@ class PercyMessenger {
     status_msg.back_right.g_value = state.light_state.LIGHT_STATUS[3][1];
     status_msg.back_right.b_value = state.light_state.LIGHT_STATUS[3][2];
     
-    // auto actuator = percy_->GetActuatorStateMsgGroup();
+    //motor state feedback
+    auto actuator = percy_->GetActuatorStateMsgGroup();
 
-    // for (int i = 0; i < 2; ++i) {
-    //   // actuator_hs_state
-    //   uint8_t motor_id = actuator.actuator_hs_state[i].motor_id;
+    for (int i = 0; i < 2; ++i) {
+      // actuator_hs_state
+      uint8_t motor_id = actuator.actuator_hs_state[i].motor_id;
+      
+      status_msg.actuator_states[motor_id].motor_id = motor_id;
+      status_msg.actuator_states[motor_id].rpm =
+          actuator.actuator_hs_state[i].rpm;
+      status_msg.actuator_states[motor_id].current =
+          actuator.actuator_hs_state[i].current;
+      status_msg.actuator_states[motor_id].position =
+          actuator.actuator_hs_state[i].pulse_count;
 
-    //   status_msg.actuator_states[motor_id].rpm =
-    //       actuator.actuator_hs_state[i].rpm;
-    //   status_msg.actuator_states[motor_id].current =
-    //       actuator.actuator_hs_state[i].current;
-    //   status_msg.actuator_states[motor_id].pulse_count =
-    //       actuator.actuator_hs_state[i].pulse_count;
+      // actuator_ls_state
+      motor_id = actuator.actuator_ls_state[i].motor_id;
 
-    //   // actuator_ls_state
-    //   motor_id = actuator.actuator_ls_state[i].motor_id;
+      status_msg.actuator_states[motor_id].driver_voltage =
+          actuator.actuator_ls_state[i].driver_voltage;
+      status_msg.actuator_states[motor_id].error_code =
+          actuator.actuator_ls_state[i].driver_error;
+    }
 
-    //   status_msg.actuator_states[motor_id].driver_voltage =
-    //       actuator.actuator_ls_state[i].driver_voltage;
-    //   status_msg.actuator_states[motor_id].driver_temperature =
-    //       actuator.actuator_ls_state[i].driver_temp;
-    //   status_msg.actuator_states[motor_id].motor_temperature =
-    //       actuator.actuator_ls_state[i].motor_temp;
-    //   status_msg.actuator_states[motor_id].driver_state =
-    //       actuator.actuator_ls_state[i].driver_state;
-    // }
-
-    status_msg.light_control_enabled = state.light_state.lightctl_enable;
-    status_msg.front_light_state.mode = state.light_state.front_illu_mode;
     //status_msg.front_light_state.custom_value = state.light_state.front_light.custom_value;
     status_pub_->publish(status_msg);
 

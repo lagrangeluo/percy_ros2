@@ -38,9 +38,6 @@ PercyRgb back_right
 #TODO
 PercyActuatorState[2] actuator_states
 
-bool light_control_enabled
-PercyLightState front_light_state
-
 #odometer state
 float64 left_odomter
 float64 right_odomter
