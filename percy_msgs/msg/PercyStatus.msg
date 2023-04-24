@@ -31,13 +31,17 @@ PercyRgb front_right
 PercyRgb back_left
 PercyRgb back_right
 
-#remote data feedback
-#TODO
+#remote data feedback 
+PercyRCState rc_state
 
 # motor state
 #TODO
 PercyActuatorState[2] actuator_states
 
-#odometer state
-float64 left_odomter
-float64 right_odomter
+#sensor state
+PercyBmsState bms_state
+
+uint8 powerbutton
+
+uint32 wheel_circumference
+uint32 wheel_track

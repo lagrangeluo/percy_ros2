@@ -91,7 +91,6 @@ class PercyMessenger {
     auto state = percy_->GetRobotCoreStateMsgGroup();
 
     // publish percy state message
-    percy_msgs::msg::PercyStatus status_msg;
 
     status_msg.header.stamp = current_time_;
 
@@ -125,6 +124,16 @@ class PercyMessenger {
     status_msg.back_right.g_value = state.light_state.LIGHT_STATUS[3][1];
     status_msg.back_right.b_value = state.light_state.LIGHT_STATUS[3][2];
     
+    //remote rc state
+    status_msg.rc_state.swa = state.rc_state.swa;
+    status_msg.rc_state.swb = state.rc_state.swb;
+    status_msg.rc_state.swc = state.rc_state.swc;
+    status_msg.rc_state.swd = state.rc_state.swd;
+    status_msg.rc_state.stick_right_v = state.rc_state.stick_right_v;
+    status_msg.rc_state.stick_right_h = state.rc_state.stick_right_h;
+    status_msg.rc_state.stick_left_v = state.rc_state.stick_left_v;
+    status_msg.rc_state.stick_left_h = state.rc_state.stick_left_h;
+
     //motor state feedback
     auto actuator = percy_->GetActuatorStateMsgGroup();
 
@@ -149,7 +158,21 @@ class PercyMessenger {
           actuator.actuator_ls_state[i].driver_error;
     }
 
-    //status_msg.front_light_state.custom_value = state.light_state.front_light.custom_value;
+    //sensor data feedback
+    auto sensor = percy_->GetSensorStateMsgGroup();
+
+
+    status_msg.bms_state.soc = sensor.bms_states.battery_soc;
+    status_msg.bms_state.soh = sensor.bms_states.battery_soh;
+    status_msg.bms_state.battery_voltage = sensor.bms_states.voltage;
+    status_msg.bms_state.battery_current = sensor.bms_states.current;
+    status_msg.bms_state.battery_temp = sensor.bms_states.temperature;
+
+    status_msg.powerbutton = sensor.button_state.power_button_event;
+
+    status_msg.wheel_circumference = sensor.mechanical_state.wheel_circumference;
+    status_msg.wheel_track = sensor.mechanical_state.wheel_track;
+
     status_pub_->publish(status_msg);
 
     MotionStateMessage motion;
@@ -187,6 +210,8 @@ class PercyMessenger {
   rclcpp::Subscription<percy_msgs::msg::PercyPowerRailCtl>::SharedPtr power_rail_ctl_sub;
 
   std::shared_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
+
+  percy_msgs::msg::PercyStatus status_msg;
 
   // speed variables
   double position_x_ = 0.0;

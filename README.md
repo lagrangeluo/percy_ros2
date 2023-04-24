@@ -136,7 +136,7 @@ this part is used for agilex's developers to test the CAN protocol
   ```
   
   ```bash
-  ros2 topic echo /percy_status topic (part of it)
+  ros2 topic echo /percy_status
   vehicle_state: 1
   control_mode: 1
   error_code: 1
@@ -153,7 +153,7 @@ this part is used for agilex's developers to test the CAN protocol
   ```
   
   ```bash
-  ros2 topic echo /percy_status topic (part of it)
+  ros2 topic echo /percy_status
   linear_velocity: 1.0
   angular_velocity: 1.0
   ```
@@ -165,7 +165,7 @@ this part is used for agilex's developers to test the CAN protocol
    cansend vcan0 231#0101000100000000
   ```
   ```bash
-  ros2 topic echo /percy_status topic (part of it)
+  ros2 topic echo /percy_status
   light_control_state: 1
   front_light_mode: 1
   back_light_mode: 1
@@ -179,7 +179,7 @@ this part is used for agilex's developers to test the CAN protocol
   ```
   
   ```bash
-  ros2 topic echo /percy_status topic (part of it)
+  ros2 topic echo /percy_status
   front_left:
     r_value: 1
     g_value: 1
@@ -189,6 +189,63 @@ this part is used for agilex's developers to test the CAN protocol
     g_value: 1
     b_value: 1
     ...(the same with back_left and back_right)
+  ```
+  
+  - send motor state feedback
+  
+  ```bash
+  cansend vcan0 251#000C0064000004d2
+  cansend vcan0 261#00F0000000000100
+  ```
+  
+  - send rc feedback
+  
+  ```bash
+  cansend vcan0 241#AA32323232320000
+  ```
+  
+  ```bash
+  ros2 topic echo /percy_status
+  rc_state:
+    swa: 0
+    swb: 0
+    swc: 0
+    swd: 0
+    stick_right_v: 50
+    stick_right_h: 50
+    stick_left_v: 50
+    stick_left_h: 50
+    var_a: 0
+  ```
+  
+  - send BMS feedback
+  
+  ```bash
+  cansend vcan0 361#323204D204D2012C
+  ```
+  
+  ```bash
+  ros2 topic echo /percy_status
+  bms_state:
+    soc: 50
+    soh: 50
+    battery_voltage: 123.4000015258789
+    battery_current: 123.4000015258789
+    battery_temp: 30
+  ```
+  
+  - send power button feedback and mechanical calibration feedback
+  
+  ```bash
+  cansend vcan0 371#0200000000000000
+  cansend vcan0 381#000004D2000004D2
+  ```
+  
+  ```bash
+  ros2 topic echo /percy_status
+  powerbutton: 2
+  wheel_circumference: 1234
+  wheel_track: 1234
   ```
   
   
